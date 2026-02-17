@@ -67,7 +67,7 @@ fun LobbyScreen(
 
         // Title
         Text(
-            text = "RETRO QUEST",
+            text = "RETROSPECTIVA",
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
             color = RetroColors.Cyan40,

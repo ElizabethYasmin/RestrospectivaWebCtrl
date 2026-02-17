@@ -4,6 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.retromultiplataformkotin.data.FirebaseCard
 import com.example.retromultiplataformkotin.data.FirebaseRetroRepository
+import com.example.retromultiplataformkotin.data.FirebaseTimer
+import com.example.retromultiplataformkotin.data.currentTimeMillis
+import kotlinx.coroutines.delay
 import com.example.retromultiplataformkotin.model.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,7 +24,7 @@ class RetroViewModel : ViewModel() {
     private val sessionId = "retro-live"
 
     // Current member info — selected by user in lobby
-    private val _currentMemberId = MutableStateFlow("sho")
+    private val _currentMemberId = MutableStateFlow("")
     val currentMemberId: StateFlow<String> = _currentMemberId.asStateFlow()
 
     val isLeader: Boolean get() = TeamData.members.find { it.id == _currentMemberId.value }?.isLeader == true
@@ -53,6 +56,17 @@ class RetroViewModel : ViewModel() {
     private val _hasVotedLeaders = MutableStateFlow(false)
     val hasVotedLeaders: StateFlow<Boolean> = _hasVotedLeaders.asStateFlow()
 
+    // Whether the user has selected a member in this session
+    private val _hasSelectedMember = MutableStateFlow(false)
+    val hasSelectedMember: StateFlow<Boolean> = _hasSelectedMember.asStateFlow()
+
+    // Timer
+    private val _timer = MutableStateFlow(FirebaseTimer())
+    val timer: StateFlow<FirebaseTimer> = _timer.asStateFlow()
+
+    private val _remainingSeconds = MutableStateFlow(0)
+    val remainingSeconds: StateFlow<Int> = _remainingSeconds.asStateFlow()
+
     init {
         connectToFirebase()
     }
@@ -64,14 +78,8 @@ class RetroViewModel : ViewModel() {
                 repo.signInAnonymously()
                 _isConnected.value = true
 
-                // Create session if leader (idempotent)
+                // Create session (idempotent)
                 repo.createSession(sessionId)
-
-                // Mark self as online
-                val member = TeamData.members.find { it.id == _currentMemberId.value }
-                if (member != null) {
-                    repo.setPresence(sessionId, member.id, member.name, online = true)
-                }
 
                 // Observe phase changes in real time
                 launch {
@@ -126,6 +134,27 @@ class RetroViewModel : ViewModel() {
                         _leaderVotes.value = voteTotals
                     }
                 }
+
+                // Observe timer in real time
+                launch {
+                    repo.observeTimer(sessionId).collect { t ->
+                        _timer.value = t
+                    }
+                }
+
+                // Local tick loop to compute remaining seconds
+                launch {
+                    while (true) {
+                        val t = _timer.value
+                        _remainingSeconds.value = when {
+                            t.durationSeconds == 0 || t.startedAt == 0L -> t.durationSeconds
+                            t.isPaused && t.pausedAt > 0L -> (t.durationSeconds - ((t.pausedAt - t.startedAt) / 1000)).toInt().coerceAtLeast(0)
+                            t.isPaused -> t.durationSeconds
+                            else -> (t.durationSeconds - ((currentTimeMillis() - t.startedAt) / 1000)).toInt().coerceAtLeast(0)
+                        }
+                        delay(500L)
+                    }
+                }
             } catch (e: Exception) {
                 _isConnected.value = false
             }
@@ -134,6 +163,7 @@ class RetroViewModel : ViewModel() {
 
     fun selectMember(memberId: String) {
         _currentMemberId.value = memberId
+        _hasSelectedMember.value = true
         viewModelScope.launch {
             val member = TeamData.members.find { it.id == memberId }
             if (member != null) {
@@ -175,7 +205,40 @@ class RetroViewModel : ViewModel() {
             RetroPhase.LEADER_VOTE -> RetroPhase.LEADER_VOTE
         }
         viewModelScope.launch {
+            // Reset timer when changing phase
+            repo.setTimer(sessionId, FirebaseTimer())
             repo.updatePhase(sessionId, next.name)
+        }
+    }
+
+    // --- Timer controls (leader only) ---
+
+    fun setTimerDuration(seconds: Int) {
+        viewModelScope.launch {
+            repo.setTimer(sessionId, FirebaseTimer(durationSeconds = seconds, startedAt = 0L, isPaused = true, pausedAt = 0L))
+        }
+    }
+
+    fun startTimer() {
+        val current = _timer.value
+        val now = currentTimeMillis()
+        // If resuming from pause, shift startedAt forward so remaining time stays correct
+        val elapsed = if (current.pausedAt > 0L) current.pausedAt - current.startedAt else 0L
+        val newStartedAt = now - elapsed
+        viewModelScope.launch {
+            repo.setTimer(sessionId, current.copy(startedAt = newStartedAt, isPaused = false, pausedAt = 0L))
+        }
+    }
+
+    fun pauseTimer() {
+        viewModelScope.launch {
+            repo.setTimer(sessionId, _timer.value.copy(isPaused = true, pausedAt = currentTimeMillis()))
+        }
+    }
+
+    fun resetTimer() {
+        viewModelScope.launch {
+            repo.setTimer(sessionId, FirebaseTimer())
         }
     }
 
@@ -220,15 +283,19 @@ class RetroViewModel : ViewModel() {
 
     fun resetSession() {
         _hasVotedLeaders.value = false
+        _hasSelectedMember.value = false
         _moods.value = emptyMap()
         _leaderVotes.value = emptyMap()
+        _onlineMembers.value = emptySet()
         viewModelScope.launch {
             repo.deleteSession(sessionId)
             repo.createSession(sessionId)
-            val member = TeamData.members.find { it.id == _currentMemberId.value }
-            if (member != null) {
-                repo.setPresence(sessionId, member.id, member.name, online = true)
-            }
+        }
+    }
+
+    fun clearStalePresence() {
+        viewModelScope.launch {
+            repo.clearPresence(sessionId)
         }
     }
 

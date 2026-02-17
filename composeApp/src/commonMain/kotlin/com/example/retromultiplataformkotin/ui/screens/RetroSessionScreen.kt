@@ -35,6 +35,14 @@ fun RetroSessionScreen(
     onVoteCard: (String) -> Unit,
     onNextPhase: () -> Unit,
     modifier: Modifier = Modifier,
+    remainingSeconds: Int = -1,
+    totalSeconds: Int = 0,
+    isTimerPaused: Boolean = true,
+    isTimerStarted: Boolean = false,
+    onTimerStart: () -> Unit = {},
+    onTimerPause: () -> Unit = {},
+    onTimerReset: () -> Unit = {},
+    onSetDuration: (Int) -> Unit = {},
 ) {
     var inputText by remember { mutableStateOf("") }
 
@@ -55,7 +63,18 @@ fun RetroSessionScreen(
             .padding(16.dp),
     ) {
         // Phase header
-        PhaseHeader(currentPhase = session.phase)
+        PhaseHeader(
+            currentPhase = session.phase,
+            remainingSeconds = remainingSeconds,
+            totalSeconds = totalSeconds,
+            isTimerPaused = isTimerPaused,
+            isTimerStarted = isTimerStarted,
+            isLeader = isLeader,
+            onTimerStart = onTimerStart,
+            onTimerPause = onTimerPause,
+            onTimerReset = onTimerReset,
+            onSetDuration = onSetDuration,
+        )
 
         Spacer(modifier = Modifier.height(12.dp))
 

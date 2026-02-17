@@ -24,8 +24,9 @@ fun App() {
         val moods by viewModel.moods.collectAsState()
         val leaderVotes by viewModel.leaderVotes.collectAsState()
         val hasVotedLeaders by viewModel.hasVotedLeaders.collectAsState()
-
-        var hasSelectedMember by remember { mutableStateOf(false) }
+        val timer by viewModel.timer.collectAsState()
+        val remainingSeconds by viewModel.remainingSeconds.collectAsState()
+        val hasSelectedMember by viewModel.hasSelectedMember.collectAsState()
 
         AnimatedContent(
             targetState = if (!hasSelectedMember) "SELECT" else session.phase.name,
@@ -39,10 +40,11 @@ fun App() {
                     MemberSelectScreen(
                         members = session.members,
                         isConnected = isConnected,
+                        takenMemberIds = onlineMembers,
                         onMemberSelected = { memberId ->
                             viewModel.selectMember(memberId)
-                            hasSelectedMember = true
                         },
+                        onClearStale = { viewModel.clearStalePresence() },
                     )
                 }
 
@@ -54,6 +56,14 @@ fun App() {
                         onMoodSelected = { viewModel.submitMood(it) },
                         onContinue = { viewModel.nextPhase() },
                         currentMemberId = currentMemberId,
+                        remainingSeconds = remainingSeconds,
+                        totalSeconds = timer.durationSeconds,
+                        isTimerPaused = timer.isPaused,
+                        isTimerStarted = timer.startedAt > 0L,
+                        onTimerStart = { viewModel.startTimer() },
+                        onTimerPause = { viewModel.pauseTimer() },
+                        onTimerReset = { viewModel.resetTimer() },
+                        onSetDuration = { viewModel.setTimerDuration(it) },
                     )
                 }
 
@@ -83,6 +93,14 @@ fun App() {
                         onSubmitVotes = { viewModel.submitLeaderVotes(it) },
                         onShowPodium = { },
                         onNewRetro = { viewModel.resetSession() },
+                        remainingSeconds = remainingSeconds,
+                        totalSeconds = timer.durationSeconds,
+                        isTimerPaused = timer.isPaused,
+                        isTimerStarted = timer.startedAt > 0L,
+                        onTimerStart = { viewModel.startTimer() },
+                        onTimerPause = { viewModel.pauseTimer() },
+                        onTimerReset = { viewModel.resetTimer() },
+                        onSetDuration = { viewModel.setTimerDuration(it) },
                     )
                 }
 
@@ -95,6 +113,14 @@ fun App() {
                         onApproveCard = { viewModel.approveCard(it) },
                         onVoteCard = { viewModel.voteCard(it) },
                         onNextPhase = { viewModel.nextPhase() },
+                        remainingSeconds = remainingSeconds,
+                        totalSeconds = timer.durationSeconds,
+                        isTimerPaused = timer.isPaused,
+                        isTimerStarted = timer.startedAt > 0L,
+                        onTimerStart = { viewModel.startTimer() },
+                        onTimerPause = { viewModel.pauseTimer() },
+                        onTimerReset = { viewModel.resetTimer() },
+                        onSetDuration = { viewModel.setTimerDuration(it) },
                     )
                 }
             }
