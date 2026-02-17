@@ -39,11 +39,13 @@ fun RetroSessionScreen(
     var inputText by remember { mutableStateOf("") }
 
     val phaseColor = when (session.phase) {
+        RetroPhase.MOOD_CHECK -> RetroColors.Gold
         RetroPhase.WAITING -> RetroColors.Cyan40
         RetroPhase.WENT_WELL -> RetroColors.GreenWentWell
         RetroPhase.TO_IMPROVE -> RetroColors.OrangeImprove
         RetroPhase.ACTION_ITEMS -> RetroColors.BlueAction
         RetroPhase.RESULTS -> RetroColors.PurpleResults
+        RetroPhase.LEADER_VOTE -> RetroColors.Gold
     }
 
     Column(
@@ -166,11 +168,13 @@ fun RetroSessionScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             val nextPhaseText = when (session.phase) {
+                RetroPhase.MOOD_CHECK -> ""
                 RetroPhase.WAITING -> "▶ Comenzar"
                 RetroPhase.WENT_WELL -> "▶ Siguiente: ¿Qué mejorar?"
                 RetroPhase.TO_IMPROVE -> "▶ Siguiente: Acciones"
                 RetroPhase.ACTION_ITEMS -> "▶ Ver Resultados"
                 RetroPhase.RESULTS -> ""
+                RetroPhase.LEADER_VOTE -> ""
             }
             if (nextPhaseText.isNotEmpty()) {
                 RetroButton(

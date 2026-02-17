@@ -29,8 +29,8 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 fun ResultsScreen(
     session: RetroSession,
-    onNewRetro: () -> Unit,
     isLeader: Boolean,
+    onNextPhase: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val wentWellCards = session.cards.filter { it.phase == RetroPhase.WENT_WELL && it.isApproved }
@@ -155,14 +155,15 @@ fun ResultsScreen(
             }
         }
 
-        // New retro button
+        // Leader vote button
         if (isLeader) {
             item {
                 Spacer(modifier = Modifier.height(8.dp))
                 RetroButton(
-                    text = "🔄 Nueva Retrospectiva",
-                    onClick = onNewRetro,
-                    color = RetroColors.Cyan40,
+                    text = "⭐ Votar por Líderes",
+                    onClick = onNextPhase,
+                    color = RetroColors.Gold,
+                    textColor = RetroColors.TextOnAccent,
                     modifier = Modifier.fillMaxWidth(),
                 )
                 Spacer(modifier = Modifier.height(24.dp))

@@ -24,6 +24,10 @@ import com.example.retromultiplataformkotin.model.TeamMember
 import com.example.retromultiplataformkotin.theme.RetroColors
 import com.example.retromultiplataformkotin.ui.components.AvatarCard
 import com.example.retromultiplataformkotin.ui.components.RetroButton
+import androidx.compose.foundation.Image
+import org.jetbrains.compose.resources.painterResource
+import retromultiplataformkotin.composeapp.generated.resources.Res
+import retromultiplataformkotin.composeapp.generated.resources.app_logo
 
 @Composable
 fun LobbyScreen(
@@ -50,11 +54,20 @@ fun LobbyScreen(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Logo
+        Image(
+            painter = painterResource(Res.drawable.app_logo),
+            contentDescription = "Retro Quest Logo",
+            modifier = Modifier.size(80.dp),
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
 
         // Title
         Text(
-            text = "🎮 RETRO QUEST",
+            text = "RETRO QUEST",
             style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
             color = RetroColors.Cyan40,

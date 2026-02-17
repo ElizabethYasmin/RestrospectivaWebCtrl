@@ -14,10 +14,12 @@ data class TeamMember(
 
 enum class RetroPhase(val title: String, val emoji: String, val description: String) {
     WAITING("Sala de Espera", "🎮", "Esperando a que todos se unan..."),
+    MOOD_CHECK("Estado de Ánimo", "😊", "¿Cómo te fue este sprint?"),
     WENT_WELL("¿Qué salió bien?", "🌟", "Comparte los logros del sprint"),
     TO_IMPROVE("¿Qué podemos mejorar?", "🔧", "Identifica áreas de mejora"),
     ACTION_ITEMS("Acciones", "🎯", "Votemos las acciones a tomar"),
     RESULTS("Resultados", "🏆", "Resumen de la retrospectiva"),
+    LEADER_VOTE("Vota por tu Líder", "⭐", "Reparte tus estrellas"),
 }
 
 data class RetroCard(
@@ -31,27 +33,38 @@ data class RetroCard(
 
 data class RetroSession(
     val id: String = "",
-    val phase: RetroPhase = RetroPhase.WAITING,
+    val phase: RetroPhase = RetroPhase.MOOD_CHECK,
     val cards: List<RetroCard> = emptyList(),
     val members: List<TeamMember> = emptyList(),
 )
 
+enum class SprintMood(val emoji: String, val label: String) {
+    GREAT("😄", "Genial"),
+    GOOD("🙂", "Bien"),
+    NEUTRAL("😐", "Normal"),
+    TOUGH("😓", "Difícil"),
+    FRUSTRATED("😤", "Frustrante"),
+}
+
 object TeamData {
     val members = listOf(
-        TeamMember("sho", "Sho", "Tech Lead", Res.drawable.avatar_sho, isLeader = true),
+        TeamMember("elizabeth", "Elizabeth", "Android Dev", Res.drawable.avatar_Eli, isLeader = true),
         TeamMember("david", "David", "Android Dev", Res.drawable.avatar_david),
         TeamMember("marcos", "Marcos", "Android Dev", Res.drawable.avatar_marcos),
-        TeamMember("juan", "Juan", "iOS Dev", Res.drawable.avatar_juan),
-        TeamMember("shirley", "Shirley", "iOS Dev", Res.drawable.avatar_shirley),
+        TeamMember("juan", "Juan", "Android Dev", Res.drawable.avatar_juan),
+        TeamMember("shirley", "Shirley", "Android Dev", Res.drawable.avatar_shirley),
         TeamMember("luistorres", "Luis Torres", "Android Dev", Res.drawable.avatar_luistorres),
-        TeamMember("freddy", "Freddy", "QA Engineer", Res.drawable.avatar_freddy),
-        TeamMember("hector", "Héctor", "Backend Dev", Res.drawable.avatar_hector),
+        TeamMember("freddy", "Freddy", "Android Dev", Res.drawable.avatar_freddy),
+        TeamMember("hector", "Héctor", "Android Dev", Res.drawable.avatar_hector),
         TeamMember("nestor", "Néstor", "Android Dev", Res.drawable.avatar_nestor),
-        TeamMember("leonar", "Leonar", "iOS Dev", Res.drawable.avatar_leonar),
-        TeamMember("cecilia", "Cecilia", "UX Designer", Res.drawable.avatar_cecilia),
+        TeamMember("leonar", "Leonar", "Android Dev", Res.drawable.avatar_leonar),
+        TeamMember("cecilia", "Cecilia", "Android Dev", Res.drawable.avatar_cecilia),
         TeamMember("carlos", "Carlos", "Android Dev", Res.drawable.avatar_carlos),
-        TeamMember("israel", "Israel", "Scrum Master", Res.drawable.avatar_israel),
-        TeamMember("jofree", "Jofree", "iOS Dev", Res.drawable.avatar_jofree),
-        TeamMember("lizette", "Lizette", "QA Engineer", Res.drawable.avatar_lizette),
+        TeamMember("jofree", "Jofree", "Android Dev", Res.drawable.avatar_jofree),
+        TeamMember("lizette", "Lizette", "Android Dev", Res.drawable.avatar_lizette),
+        TeamMember("santiago", "Santiago", "Android Dev", Res.drawable.avatar_Santiago),
+        TeamMember("victor", "Victor", "Android Dev", Res.drawable.avatar_Vicotr),
     )
+
+    val leaderIds = listOf("juan", "lizette", "marcos", "david", "nestor")
 }

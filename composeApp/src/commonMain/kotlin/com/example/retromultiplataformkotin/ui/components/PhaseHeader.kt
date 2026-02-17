@@ -26,11 +26,13 @@ fun PhaseHeader(
     modifier: Modifier = Modifier,
 ) {
     val phaseColor = when (currentPhase) {
+        RetroPhase.MOOD_CHECK -> RetroColors.Gold
         RetroPhase.WAITING -> RetroColors.Cyan40
         RetroPhase.WENT_WELL -> RetroColors.GreenWentWell
         RetroPhase.TO_IMPROVE -> RetroColors.OrangeImprove
         RetroPhase.ACTION_ITEMS -> RetroColors.BlueAction
         RetroPhase.RESULTS -> RetroColors.PurpleResults
+        RetroPhase.LEADER_VOTE -> RetroColors.Gold
     }
 
     val phaseIndex = RetroPhase.entries.indexOf(currentPhase)
