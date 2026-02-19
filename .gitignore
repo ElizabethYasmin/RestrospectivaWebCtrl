@@ -19,5 +19,6 @@ captures
 node_modules/
 *.jks
 *.keystore
+google-services.json
 composeApp/release/
 .claude/
