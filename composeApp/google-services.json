@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "136109922782",
+    "firebase_url": "https://retroquest-9d724-default-rtdb.firebaseio.com",
+    "project_id": "retroquest-9d724",
+    "storage_bucket": "retroquest-9d724.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:136109922782:android:04c862f0e1260f4c73654f",
+        "android_client_info": {
+          "package_name": "com.example.retromultiplataformkotin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDbnHKfvxnCJOn8NAC-XXnTj_dgWrfi92o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:136109922782:android:8a2efc8626aea3c173654f",
+        "android_client_info": {
+          "package_name": "com.retroquest.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDbnHKfvxnCJOn8NAC-XXnTj_dgWrfi92o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -66,11 +66,11 @@ kotlin {
 }
 
 android {
-    namespace = "com.example.retromultiplataformkotin"
+    namespace = "com.retroquest.app"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "com.example.retromultiplataformkotin"
+        applicationId = "com.retroquest.app"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
         versionCode = 1
